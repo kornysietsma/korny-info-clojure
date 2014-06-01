@@ -7,6 +7,7 @@
                  [stasis "1.1.1"]
                  [ring "1.2.2"]
                  [optimus "0.14.4"]
+                 [optimus-sass "0.0.2"]
                  [hiccup "1.0.5"]
                  [enlive "1.1.5"]
                  [clygments "0.1.1"]

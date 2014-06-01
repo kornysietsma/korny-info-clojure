@@ -3,6 +3,7 @@
             [stasis.core :as stasis]
             [optimus.prime :as optimus]
             [optimus.assets :as assets]
+            [optimus-sass.core]
             [optimus.export]
             [hiccup.page :refer [html5]]
             [optimus.optimizations :as optimizations]
@@ -11,7 +12,8 @@
             [clj-site.highlight :refer [highlight-code-blocks]]))
 
 (defn get-assets []
-  (assets/load-assets "public" [#"/styles/.*\.css"
+  (assets/load-assets "public" [;#"/styles/.*\.css"
+                                #"/styles/[^_]*\.scss"
                                ;#"/images/.*"
                                ; #"/scripts/.*\.js"
                                 ]))
@@ -24,8 +26,8 @@
 
 (defn prepare-pages [pages]
   (into {}
-        (for [[title page] pages]
-          [title (partial prepare-page page)])))
+        (for [[name page] pages]
+          [name (partial prepare-page page)])))
 
 (defn get-raw-pages []
   (stasis/merge-page-sources
@@ -39,7 +41,7 @@
 (def optimize optimizations/all)
 
 (def app (-> (stasis/serve-pages get-pages)
-             (optimus/wrap get-assets optimize serve-live-assets)
+             (optimus/wrap get-assets optimizations/none serve-live-assets)
              wrap-content-type))
 
 (def export-dir "./dist")

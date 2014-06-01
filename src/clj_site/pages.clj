@@ -10,14 +10,19 @@
 
 (defn partial-pages [pages]
   (into {}
-        (for [[title page] pages]
-          [title
+        (for [[name page] pages]
+          [name
            (partial layout/layout-page page)])))
+
+(defn fix-markdown-filename [name]
+  (if (re-matches #".*/index.md$" name)
+    (clojure.string/replace name #"\.md$" ".html")
+    (clojure.string/replace name #"\.md$" "")))
 
 (defn markdown-pages [pages]
   (into {}
-        (for [[title page] pages]
-          [(clojure.string/replace title #"\.md$" "")
+        (for [[name page] pages]
+          [(fix-markdown-filename name)
            (partial layout/layout-page (md/to-html page pegdown-options))])))
 
 (defn get-partial-pages []
