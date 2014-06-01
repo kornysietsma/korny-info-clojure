@@ -4,7 +4,7 @@ This is an unsorted collection of code snippets, mostly from [this blog post](ht
 
 ## Namespaces and main methods
 
-```clojure
+```clj
 (ns foo.bar
   (:import [java.net URI URL])
   (:require [clj-http.client :as client :refer [request]]
@@ -18,7 +18,7 @@ This is an unsorted collection of code snippets, mostly from [this blog post](ht
 
 ## Midje basics
 
-```clojure
+```clj
 (ns foo.t-bar
   (:require [midje.sweet :refer :all]
             [foo.bar :as subject]))  ; or just :refer :all
@@ -31,7 +31,7 @@ This is an unsorted collection of code snippets, mostly from [this blog post](ht
 
 ## Midje custom checker
 
-```clojure
+```clj
 (defn same-json [expected]
   (fn [actual]
     (= (parse-string actual true) (parse-string expected true))))
@@ -48,7 +48,7 @@ This is an unsorted collection of code snippets, mostly from [this blog post](ht
 
 ## Destructuring
 
-```clojure
+```clj
 (let [[a b & rest :as all]       [:a :b :c :d]
       {e :e [f g] :fg}           {:e "e" :fg ["f" "g"]}
       {:keys [h i] :or {:h "h"}} {:i "i"}]
@@ -58,7 +58,7 @@ This is an unsorted collection of code snippets, mostly from [this blog post](ht
       ; all is [:a :b :c :d]
 )
 
-(for [[key val] {:a "a" :b "b" :c "c"} ... )
+(for [[key val] {:a "a" :b "b" :c "c"}] ... )
 
 ; mostly avoid this as the syntax is confusing, but on occasion:
 (defn foo [& {:keys [a b] :or {a "foo" b "bar"}]
@@ -78,7 +78,16 @@ This is an unsorted collection of code snippets, mostly from [this blog post](ht
 => {:bar :foo, :bat :baz}
 ```
 
-see also [https://github.com/clojure/algo.generic](algo.generic's fmap function) if you just want to manipulate values not keys
+see also [algo.generic's fmap function](https://github.com/clojure/algo.generic) if you just want to manipulate values not keys
+
+I've also seen this idiom:
+
+```clj
+(zipmap (map keyfn (keys old-map))
+        (map valfn (vals old-map)))
+```
+
+which generally works, but I'm not sure I see this as any better than the alternative above - and it depends on (keys old-map) and (vals old-map) to be ordered the same, which is true for Clojure maps, but not guaranteed by the Map interface.
 
 ## Protocols and Records
 

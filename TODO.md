@@ -3,3 +3,4 @@
 * analytics
 * about page/panel
 * rss
+* upgrade the kraken!
