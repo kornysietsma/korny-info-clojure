@@ -4,7 +4,7 @@
 
 A good from-scratch online book is [Clojure for the Brave and True](http://www.braveclojure.com/)
 
-I'd also recommend digging through the book [Clojure Programming](http://shop.oreilly.com/product/0636920013754.do) - or others on my [bookshelf](bookshelf) when I get that list up :)
+I'd also recommend digging through the book [Clojure Programming](http://shop.oreilly.com/product/0636920013754.do) - or others on my [bookshelf](/bookshelf) when I get that list up :)
 
 There is actually a fair bit of useful background info at http://clojure.org as well.
 
@@ -31,7 +31,7 @@ You can also learn a lot from repetitive exercises (commonly called "Koans") - t
 * [4clojure](https://www.4clojure.com/) is a handy online learning site.  Beware though, the difficulty jumps from "real simple" to "OMGWTFBBQ" - don't be disheartened if one of the problems seems ridiculously hard, just try another problem for a bit.
 * There is also http://clojurekoans.com/ - I haven't tried these, but they look good.
 
-And remember to keep the [Clojure cheat sheet](http://jafingerhut.github.io/cheatsheet-clj-1.3/cheatsheet-tiptip-cdocs-summary.html) handy - and refer to it often!  This is your basic vocabulary of clojure verbs - you want to practice and learn most of them.  More at the [resources](resources) page.
+And remember to keep the [Clojure cheat sheet](http://jafingerhut.github.io/cheatsheet-clj-1.3/cheatsheet-tiptip-cdocs-summary.html) handy - and refer to it often!  This is your basic vocabulary of clojure verbs - you want to practice and learn most of them.  More at the [resources](/resources) page.
 
 ## Asking for help
 
