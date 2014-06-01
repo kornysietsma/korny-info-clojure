@@ -17,12 +17,15 @@
                                 ]))
 
 (defn prepare-page [page req]
-  (-> (if (string? page) page (page req))
+  (-> (if (string? page)
+        page
+        (page req))
       highlight-code-blocks))
 
 (defn prepare-pages [pages]
-  (zipmap (keys pages)
-          (map #(partial prepare-page %) (vals pages))))
+  (into {}
+        (for [[title page] pages]
+          [title (partial prepare-page page)])))
 
 (defn get-raw-pages []
   (stasis/merge-page-sources

@@ -9,12 +9,16 @@
   [:autolinks :fenced-code-blocks :strikethrough])
 
 (defn partial-pages [pages]
-  (zipmap (keys pages)
-          (map #(fn [req] (layout/layout-page req %)) (vals pages))))
+  (into {}
+        (for [[title page] pages]
+          [title
+           (partial layout/layout-page page)])))
 
 (defn markdown-pages [pages]
-  (zipmap (map #(clojure.string/replace % #"\.md$" "") (keys pages))
-          (map #(fn [req] (layout/layout-page req (md/to-html % pegdown-options))) (vals pages))))
+  (into {}
+        (for [[title page] pages]
+          [(clojure.string/replace title #"\.md$" "")
+           (partial layout/layout-page (md/to-html page pegdown-options))])))
 
 (defn get-partial-pages []
   (partial-pages (stasis/slurp-directory "resources/partials" #".*\.html$")))

@@ -4,7 +4,7 @@
 
 (def default-title "Korny's clojure pages")
 
-(defn layout-page [request page & {:keys [title] :or {title default-title}}]
+(defn layout-page [page request & {:keys [title] :or {title default-title}}]
   (html5
     [:head
      [:meta {:charset "utf-8"}]
