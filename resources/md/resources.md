@@ -2,7 +2,7 @@
 
 These are things I use all the time:
 
-* [Clojure cheat sheet](http://jafingerhut.github.io/cheatsheet-clj-1.3/cheatsheet-tiptip-cdocs-summary.html)
+* [Clojure cheat sheet](http://jafingerhut.github.io/cheatsheet/grimoire/cheatsheet-tiptip-cdocs-summary.html)
     * or there's the official one at http://clojure.org/cheatsheet but the above one is generally better
 * the [Clojure toolbox](http://www.clojure-toolbox.com/) for "what library does X?"
 
@@ -10,7 +10,8 @@ These are things I use all the time:
 
 * http://clojure.org/documentation - main language documentation site
 * http://clojure.github.io/clojure/ - official api docs
-* http://clojure-doc.org/ - unofficial doc site, has some useful examples (linked from the cheat sheet above)
+* http://grimoire.arrdem.com/ - the grimoire, a newer user-built doc site
+* http://clojure-doc.org/ - unofficial doc site, has some useful examples
 
 ## Essential libraries
 
