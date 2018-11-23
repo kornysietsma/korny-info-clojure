@@ -44,7 +44,7 @@
              (optimus/wrap get-assets optimizations/none serve-live-assets)
              wrap-content-type))
 
-(def export-dir "./dist")
+(def export-dir "./docs")
 
 (defn export []
   (let [assets (optimize (get-assets) {})]

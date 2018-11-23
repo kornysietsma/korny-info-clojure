@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+
+<html><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /><title>Korny's Clojure info site</title><link type="image/ico" rel="icon" href="/favicon.ico" /><link type="image/ico" rel="shortcut" href="/favicon.ico" /><link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Cousine:400,700,400italic,700italic&amp;subset=latin,latin-ext" /><link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Vollkorn:400italic,700italic,400,700', :rel =&gt; 'stylesheet" /><link rel="stylesheet" href="/03f76924ae3b/styles/site.css" /></head><body><section class="container"><header><h1><a href="/">Korny's Clojure info site</a></h1></header><h1>Snippets</h1><p>This is an unsorted collection of code snippets, mostly from <a href="http://blog.korny.info/2014/05/11/snippets.html">this blog post</a> - but I intend to add more here, and maybe categorise them.</p><h2>Namespaces and main methods</h2>
+<pre><code class="codehilite"><span class="p">(</span><span class="kd">ns </span><span class="nv">foo.bar</span>
+  <span class="p">(</span><span class="ss">:import</span> <span class="p">[</span><span class="nv">java.net</span> <span class="nv">URI</span> <span class="nv">URL</span><span class="p">])</span>
+  <span class="p">(</span><span class="ss">:require</span> <span class="p">[</span><span class="nv">clj-http.client</span> <span class="ss">:as</span> <span class="nv">client</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">request</span><span class="p">]]</span>
+            <span class="p">[</span><span class="nv">compojure.core</span> <span class="ss">:refer</span> <span class="ss">:all</span><span class="p">])</span> <span class="c1">; prefer this over 'use'</span>
+  <span class="p">(</span><span class="ss">:gen-class</span><span class="p">))</span>  <span class="c1">; if you have a main method to expose</span>
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">-main</span>
+  <span class="p">[</span><span class="o">&amp;</span> <span class="nv">args</span><span class="p">]</span>
+  <span class="p">(</span><span class="nb">println </span><span class="s">"args:"</span> <span class="nv">args</span><span class="p">))</span>
+</code></pre><h2>Midje basics</h2>
+<pre><code class="codehilite"><span class="p">(</span><span class="kd">ns </span><span class="nv">foo.t-bar</span>
+  <span class="p">(</span><span class="ss">:require</span> <span class="p">[</span><span class="nv">midje.sweet</span> <span class="ss">:refer</span> <span class="ss">:all</span><span class="p">]</span>
+            <span class="p">[</span><span class="nv">foo.bar</span> <span class="ss">:as</span> <span class="nv">subject</span><span class="p">]))</span>  <span class="c1">; or just :refer :all</span>
+
+<span class="p">(</span><span class="nf">facts</span> <span class="s">"about foos"</span>
+  <span class="p">(</span><span class="nf">fact</span> <span class="s">"the foo is alive"</span>
+    <span class="p">(</span><span class="nf">subject/foo</span> <span class="mi">123</span><span class="p">)</span> <span class="nv">=&gt;</span> <span class="p">(</span><span class="nf">just</span> <span class="p">{</span><span class="ss">:foo</span> <span class="mi">123</span><span class="p">})</span>
+    <span class="p">(</span><span class="nf">provided</span> <span class="p">(</span><span class="nf">bar</span> <span class="mi">123</span><span class="p">)</span> <span class="nv">=&gt;</span> <span class="ss">:foo</span><span class="p">)))</span>
+</code></pre><h2>Midje custom checker</h2>
+<pre><code class="codehilite"><span class="p">(</span><span class="kd">defn </span><span class="nv">same-json</span> <span class="p">[</span><span class="nv">expected</span><span class="p">]</span>
+  <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">actual</span><span class="p">]</span>
+    <span class="p">(</span><span class="nb">= </span><span class="p">(</span><span class="nf">parse-string</span> <span class="nv">actual</span> <span class="nv">true</span><span class="p">)</span> <span class="p">(</span><span class="nf">parse-string</span> <span class="nv">expected</span> <span class="nv">true</span><span class="p">))))</span>
+
+<span class="c1">; or the same test but better outputs on failure</span>
+
+<span class="p">(</span><span class="nf">defchecker</span> <span class="nv">same-json</span> <span class="p">[</span><span class="nv">expected</span><span class="p">]</span>
+  <span class="p">(</span><span class="nf">chatty-checker</span> <span class="p">[</span><span class="nv">actual</span><span class="p">]</span>
+     <span class="p">(</span><span class="nb">= </span><span class="p">(</span><span class="nf">parse-string</span> <span class="nv">actual</span> <span class="nv">true</span><span class="p">)</span> <span class="p">(</span><span class="nf">parse-string</span> <span class="nv">expected</span> <span class="nv">true</span><span class="p">))))</span>
+
+<span class="p">(</span><span class="nf">fact</span> <span class="s">"json is similar"</span>
+  <span class="p">(</span><span class="nb">slurp </span><span class="s">"file1.json"</span><span class="p">)</span> <span class="nv">=&gt;</span> <span class="p">(</span><span class="nf">same-json</span> <span class="p">(</span><span class="nb">slurp </span><span class="s">"file2.json"</span><span class="p">)))</span>
+</code></pre><h2>Destructuring</h2>
+<pre><code class="codehilite"><span class="p">(</span><span class="k">let </span><span class="p">[[</span><span class="nv">a</span> <span class="nv">b</span> <span class="o">&amp;</span> <span class="nb">rest </span><span class="ss">:as</span> <span class="nv">all</span><span class="p">]</span>       <span class="p">[</span><span class="ss">:a</span> <span class="ss">:b</span> <span class="ss">:c</span> <span class="ss">:d</span><span class="p">]</span>
+      <span class="p">{</span><span class="nv">e</span> <span class="ss">:e</span> <span class="p">[</span><span class="nv">f</span> <span class="nv">g</span><span class="p">]</span> <span class="ss">:fg</span><span class="p">}</span>           <span class="p">{</span><span class="ss">:e</span> <span class="s">"e"</span> <span class="ss">:fg</span> <span class="p">[</span><span class="s">"f"</span> <span class="s">"g"</span><span class="p">]}</span>
+      <span class="p">{</span><span class="ss">:keys</span> <span class="p">[</span><span class="nv">h</span> <span class="nv">i</span><span class="p">]</span> <span class="ss">:or</span> <span class="p">{</span><span class="ss">:h</span> <span class="s">"h"</span><span class="p">}}</span> <span class="p">{</span><span class="ss">:i</span> <span class="s">"i"</span><span class="p">}]</span>
+      <span class="c1">; a is :a, b is :b, e is "e", f is "f", g is "g"</span>
+      <span class="c1">; h defaults to "h", i is "i"</span>
+      <span class="c1">; rest is [:c :d]</span>
+      <span class="c1">; all is [:a :b :c :d]</span>
+<span class="p">)</span>
+
+<span class="p">(</span><span class="nb">for </span><span class="p">[[</span><span class="nb">key </span><span class="nv">val</span><span class="p">]</span> <span class="p">{</span><span class="ss">:a</span> <span class="s">"a"</span> <span class="ss">:b</span> <span class="s">"b"</span> <span class="ss">:c</span> <span class="s">"c"</span><span class="p">}]</span> <span class="nv">...</span> <span class="p">)</span>
+
+<span class="c1">; mostly avoid this as the syntax is confusing, but on occasion:</span>
+<span class="p">(</span><span class="kd">defn </span><span class="nv">foo</span> <span class="p">[</span><span class="o">&amp;</span> <span class="p">{</span><span class="ss">:keys</span> <span class="p">[</span><span class="nv">a</span> <span class="nv">b</span><span class="p">]</span> <span class="ss">:or</span> <span class="p">{</span><span class="nv">a</span> <span class="s">"foo"</span> <span class="nv">b</span> <span class="s">"bar"</span><span class="p">}]</span>
+  <span class="p">(</span><span class="nb">println </span><span class="nv">a</span> <span class="nv">b</span><span class="p">))</span>
+
+<span class="c1">; special syntax for passing key/val parameters:</span>
+<span class="p">(</span><span class="nf">foo</span> <span class="ss">:b</span> <span class="s">"baz"</span><span class="p">)</span> <span class="nv">=&gt;</span> <span class="s">"foo baz"</span>
+</code></pre><h2>Map manipulation</h2>
+<pre><code class="codehilite"><span class="p">(</span><span class="k">def </span><span class="nv">old-map</span> <span class="p">{</span><span class="ss">:foo</span> <span class="ss">:bar</span>, <span class="ss">:baz</span> <span class="ss">:bat</span><span class="p">})</span>
+<span class="p">(</span><span class="nb">into </span><span class="p">{}</span>
+  <span class="p">(</span><span class="nb">for </span><span class="p">[[</span><span class="nv">k</span> <span class="nv">v</span><span class="p">]</span> <span class="nv">old-map</span><span class="p">]</span>
+    <span class="p">[</span><span class="nv">v</span> <span class="nv">k</span><span class="p">]))</span>  <span class="c1">; or anything that produces a pair</span>
+<span class="nv">=&gt;</span> <span class="p">{</span><span class="ss">:bar</span> <span class="ss">:foo</span>, <span class="ss">:bat</span> <span class="ss">:baz</span><span class="p">}</span>
+</code></pre><p>see also <a href="https://github.com/clojure/algo.generic">algo.generic's fmap function</a> if you just want to manipulate values not keys</p><p>I've also seen this idiom:</p>
+<pre><code class="codehilite"><span class="p">(</span><span class="nb">zipmap </span><span class="p">(</span><span class="nb">map </span><span class="nv">keyfn</span> <span class="p">(</span><span class="nb">keys </span><span class="nv">old-map</span><span class="p">))</span>
+        <span class="p">(</span><span class="nb">map </span><span class="nv">valfn</span> <span class="p">(</span><span class="nb">vals </span><span class="nv">old-map</span><span class="p">)))</span>
+</code></pre><p>which generally works, but I'm not sure I see this as any better than the alternative above - and it depends on (keys old-map) and (vals old-map) to be ordered the same, which is true for Clojure maps, but not guaranteed by the Map interface.</p><h2>Protocols and Records</h2>
+<pre><code class="codehilite"><span class="p">(</span><span class="kd">defprotocol </span><span class="nv">FooBar</span>
+  <span class="p">(</span><span class="nf">buzz</span> <span class="p">[</span><span class="nv">this</span><span class="p">]</span> <span class="s">"does a buzzy thing"</span><span class="p">))</span>
+
+<span class="p">(</span><span class="kd">defrecord </span><span class="nv">Widget</span> <span class="p">[</span><span class="nv">hands</span> <span class="nv">feet</span><span class="p">]</span>
+  <span class="nv">FooBar</span>
+  <span class="p">(</span><span class="nf">buzz</span> <span class="p">[</span><span class="nv">this</span><span class="p">]</span> <span class="p">(</span><span class="nb">str </span><span class="nv">hands</span> <span class="nv">feet</span><span class="p">)))</span>
+
+<span class="p">(</span><span class="nf">buzz</span> <span class="p">(</span><span class="nf">Widget.</span> <span class="s">"ha"</span> <span class="s">"fe"</span><span class="p">))</span>
+<span class="nv">=&gt;</span> <span class="s">"hafe"</span>
+
+<span class="c1">; same as above but '-&gt;Widget' is a first class function</span>
+<span class="p">(</span><span class="nf">buzz</span> <span class="p">(</span><span class="nf">-&gt;Widget</span> <span class="s">"h"</span> <span class="s">"f"</span><span class="p">))</span>
+<span class="nv">=&gt;</span> <span class="s">"hf"</span>
+
+<span class="p">(</span><span class="nf">buzz</span> <span class="p">(</span><span class="nf">map-&gt;Widget</span> <span class="p">{</span><span class="ss">:feet</span> <span class="s">"foot"</span><span class="p">}))</span>
+<span class="nv">=&gt;</span> <span class="s">"foot"</span>  <span class="c1">; hands is nil</span>
+
+<span class="p">(</span><span class="nf">extend-type</span> <span class="nv">Integer</span>
+  <span class="nv">FooBar</span>
+  <span class="p">(</span><span class="nf">buzz</span> <span class="p">[</span><span class="nv">this</span><span class="p">]</span> <span class="p">(</span><span class="nb">str </span><span class="s">"buzz:"</span> <span class="nv">this</span><span class="p">)))</span>
+
+<span class="p">(</span><span class="nf">buzz</span> <span class="mi">17</span><span class="p">)</span>
+<span class="nv">=&gt;</span> <span class="s">"buzz:17"</span>
+</code></pre><h2>Threading</h2>
+<pre><code class="codehilite"><span class="p">(</span><span class="nb">-&gt; </span><span class="nv">x</span> <span class="nv">y</span> <span class="p">(</span><span class="nf">z</span> <span class="ss">:a</span><span class="p">)</span> <span class="nv">foo</span><span class="p">)</span>
+<span class="c1">; same as</span>
+<span class="p">(</span><span class="nf">foo</span> <span class="p">(</span><span class="nf">z</span> <span class="p">(</span><span class="nf">y</span> <span class="nv">x</span><span class="p">)</span> <span class="ss">:a</span><span class="p">))</span>
+
+<span class="p">(</span><span class="nf">-&gt;&gt;</span> <span class="nv">x</span> <span class="nv">y</span> <span class="p">(</span><span class="nf">z</span> <span class="ss">:a</span><span class="p">)</span> <span class="nv">foo</span><span class="p">)</span>
+<span class="c1">; same as</span>
+<span class="p">(</span><span class="nf">foo</span> <span class="p">(</span><span class="nf">z</span> <span class="ss">:a</span> <span class="p">(</span><span class="nf">y</span> <span class="nv">x</span><span class="p">)))</span>
+
+<span class="c1">; need to wrap anonymous fns:</span>
+<span class="p">(</span><span class="nb">-&gt; </span><span class="nv">x</span> <span class="p">(</span><span class="o">#</span><span class="p">(</span><span class="nb">reverse </span><span class="nv">%</span><span class="p">))</span> <span class="nv">y</span><span class="p">)</span>
+<span class="c1">; same as</span>
+<span class="p">(</span><span class="nf">y</span> <span class="p">(</span><span class="o">#</span><span class="p">(</span><span class="nb">reverse </span><span class="nv">%</span><span class="p">)</span> <span class="nv">x</span><span class="p">))</span>
+
+<span class="p">(</span><span class="nf">as-&gt;</span> <span class="nv">foo</span> <span class="nv">x</span>
+      <span class="p">(</span><span class="nb">inc </span><span class="nv">x</span><span class="p">)</span>
+      <span class="p">(</span><span class="nb">* </span><span class="nv">x</span> <span class="mi">3</span><span class="p">))</span>
+<span class="c1">; same as</span>
+<span class="p">(</span><span class="nb">* </span><span class="p">(</span><span class="nb">inc </span><span class="nv">foo</span><span class="p">)</span> <span class="mi">3</span><span class="p">)</span>
+
+<span class="c1">; also can nest as-&gt; inside -&gt;</span>
+<span class="p">(</span><span class="nb">-&gt; </span><span class="nv">foo</span>
+    <span class="nv">inc</span>
+    <span class="p">(</span><span class="nf">as-&gt;</span> <span class="nv">x</span>
+       <span class="p">(</span><span class="nf">foo</span> <span class="nv">x</span> <span class="nv">bar</span><span class="p">)</span>
+       <span class="p">(</span><span class="nf">baz</span> <span class="nv">x</span><span class="p">)))</span>
+</code></pre><h2>Paredit and Cursive</h2><p>I've mostly moved from emacs to Intellij Idea + <a href="https://cursiveclojure.com/">the Cursive plugin</a></p><p>I intend to put up a decent cheat sheet for using Cursive's structural mode, which is basically a variant of paredit. But I'm out of time. For now, look at the excellent tutorial <a href="https://cursiveclojure.com/userguide/paredit.html">on the cursive site</a>.</p></section></body></html>

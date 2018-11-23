@@ -1,14 +1,6 @@
-# clj-site
+# clojure.korny.info
 
-A Clojure library designed to ... well, that part is up to you.
+Korny's not-very-useful clojure.korny.info site
 
-## Usage
-
-FIXME
-
-## License
-
-Copyright © 2014 FIXME
-
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
+This is all quite old - trying to just do the minimum to keep the site running
+while I change ISPs to google Domains / github pages.
