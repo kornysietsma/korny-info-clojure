@@ -50,4 +50,5 @@
   (let [assets (optimize (get-assets) {})]
     (stasis/empty-directory! export-dir)
     (optimus.export/save-assets assets export-dir)
-    (stasis/export-pages (get-pages) export-dir {:optimus-assets assets})))
+    (stasis/export-pages (get-pages) export-dir {:optimus-assets assets})
+    (spit (str export-dir "/CNAME") (slurp "resources/public/CNAME"))))
